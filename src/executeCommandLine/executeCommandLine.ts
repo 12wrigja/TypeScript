@@ -624,7 +624,7 @@ function executeCommandLineWorker(
     }
 
     if (commandLine.fileNames.length === 0 && !configFileName) {
-        if (commandLine.options.showConfig) {
+        if (commandLine.options.showConfig || commandLine.options.showResolvedConfig) {
             reportDiagnostic(createCompilerDiagnostic(Diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, normalizePath(sys.getCurrentDirectory())));
         }
         else {
@@ -642,7 +642,7 @@ function executeCommandLineWorker(
     if (configFileName) {
         const extendedConfigCache = new Map<string, ExtendedConfigCacheEntry>();
         const configParseResult = parseConfigFileWithSystem(configFileName, commandLineOptions, extendedConfigCache, commandLine.watchOptions, sys, reportDiagnostic)!; // TODO: GH#18217
-        if (commandLineOptions.showConfig) {
+        if (commandLineOptions.showConfig || commandLine.options.showResolvedConfig) {
             if (configParseResult.errors.length !== 0) {
                 reportDiagnostic = updateReportDiagnostic(
                     sys,
@@ -653,7 +653,7 @@ function executeCommandLineWorker(
                 return sys.exit(ExitStatus.DiagnosticsPresent_OutputsSkipped);
             }
             // eslint-disable-next-line no-null/no-null
-            sys.write(JSON.stringify(convertToTSConfig(configParseResult, configFileName, sys), null, 4) + sys.newLine);
+            sys.write(JSON.stringify(convertToTSConfig(configParseResult, configFileName, sys, commandLineOptions.showResolvedConfig), null, 4) + sys.newLine);
             return sys.exit(ExitStatus.Success);
         }
         reportDiagnostic = updateReportDiagnostic(
@@ -693,7 +693,7 @@ function executeCommandLineWorker(
     else {
         if (commandLineOptions.showConfig) {
             // eslint-disable-next-line no-null/no-null
-            sys.write(JSON.stringify(convertToTSConfig(commandLine, combinePaths(currentDirectory, "tsconfig.json"), sys), null, 4) + sys.newLine);
+            sys.write(JSON.stringify(convertToTSConfig(commandLine, combinePaths(currentDirectory, "tsconfig.json"), sys, commandLineOptions.showResolvedConfig), null, 4) + sys.newLine);
             return sys.exit(ExitStatus.Success);
         }
         reportDiagnostic = updateReportDiagnostic(

@@ -7230,6 +7230,7 @@ export interface CompilerOptions {
     /** @internal */ watch?: boolean;
     esModuleInterop?: boolean;
     /** @internal */ showConfig?: boolean;
+    /** @internal */ showResolvedConfig?: boolean;
     useDefineForClassFields?: boolean;
 
     [option: string]: CompilerOptionsValue | TsConfigSourceFile | undefined;
